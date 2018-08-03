@@ -16,6 +16,8 @@ set(libuvc_VERSION_MINOR 0)
 set(libuvc_VERSION_PATCH 7)
 set(libuvc_VERSION ${libuvc_VERSION_MAJOR}.${libuvc_VERSION_MINOR}.${libuvc_VERSION_PATCH})
 
+set(CMAKE_OSX_DEPLOYMENT_TARGET "10.7")
+
 set(libuvc_DESCRIPTION "A cross-platform library for USB video devices")
 set(libuvc_URL "https://github.com/ktossell/libuvc")
 
