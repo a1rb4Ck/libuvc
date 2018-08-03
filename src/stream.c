@@ -105,7 +105,7 @@ struct format_table_entry *_get_format_entry(enum uvc_frame_format format) {
     FMT(UVC_FRAME_FORMAT_RGBR,
       {'R',  'G',  'B',  'R', 0x00, 0x00, 0x10, 0x00, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71})
     FMT(UVC_FRAME_FORMAT_GRAY8,
-      {'Y',  '8',  '0',  '0', 0x00, 0x00, 0x10, 0x00, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71})
+      {'Y',  '8',  ' ',  ' ', 0x00, 0x00, 0x10, 0x00, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71})
     FMT(UVC_FRAME_FORMAT_GRAY16,
       {'Y',  '1',  '6',  ' ', 0x00, 0x00, 0x10, 0x00, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71})
     FMT(UVC_FRAME_FORMAT_BY8,
@@ -690,10 +690,10 @@ void LIBUSB_CALL _uvc_stream_callback(struct libusb_transfer *transfer) {
           continue;
         }
 
-        pktbuf = libusb_get_iso_packet_buffer_simple(transfer, packet_id);
-
-        _uvc_process_payload(strmh, pktbuf, pkt->actual_length, packet_id);
-
+        if (pkt->actual_length > 0) {
+             pktbuf = libusb_get_iso_packet_buffer_simple(transfer, packet_id);
+             _uvc_process_payload(strmh, pktbuf, pkt->actual_length);
+        }
       }
     }
     break;
@@ -1184,8 +1184,8 @@ void *_uvc_user_caller(void *arg) {
     _uvc_populate_frame(strmh);
 
     pthread_mutex_unlock(&strmh->cb_mutex);
-
-    strmh->user_cb(&strmh->frame, strmh->user_ptr);
+    if (strmh->hold_bytes == strmh->cur_ctrl.dwMaxVideoFrameSize)
+        strmh->user_cb(&strmh->frame, strmh->user_ptr);
   } while(1);
 
   return NULL; // return value ignored
