@@ -1237,12 +1237,8 @@ void _uvc_populate_frame(uvc_stream_handle_t *strmh) {
   frame->sequence = strmh->hold_seq;
   frame->capture_time.tv_sec = strmh->hold_frame_ts_us / MILLION;
   frame->capture_time.tv_usec = strmh->hold_frame_ts_us - frame->capture_time.tv_sec * MILLION;
-  if (frame->data_bytes < strmh->hold_bytes) {
-    frame->data = realloc(frame->data, strmh->hold_bytes);
-  }
-  /* copy the image data from the hold buffer to the frame (unnecessary extra buf?) */
   frame->data_bytes = strmh->hold_bytes;
-  memcpy(frame->data, strmh->holdbuf, frame->data_bytes);
+  frame->data = strmh->holdbuf;
 
 }
 
