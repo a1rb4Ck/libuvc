@@ -481,6 +481,7 @@ void _uvc_swap_buffers(uvc_stream_handle_t *strmh) {
   strmh->pts = 0;
 }
 
+#ifndef __APPLE__
 int64_t get_precise_timestamp_freq(int64_t *perf_freq)
 {
 #ifdef WIN32
@@ -491,6 +492,7 @@ int64_t get_precise_timestamp_freq(int64_t *perf_freq)
   *perf_freq = MILLION;
 #endif
 }
+#endif
 
 inline int64_t get_dev_time_us(uvc_stream_handle_t *strmh, int64_t dev_ticks)
 {
